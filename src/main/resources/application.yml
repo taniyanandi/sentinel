@@ -41,6 +41,10 @@ management:
     health:
       probes:
         enabled: true
+  metrics:
+    distribution:
+      percentiles-histogram:
+        sentinel.detection.latency: true
 
 sentinel:
   kafka:
