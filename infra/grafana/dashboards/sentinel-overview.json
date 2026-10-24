@@ -1,0 +1,167 @@
+{
+    "uid": "sentinel-overview",
+    "title": "Sentinel Overview",
+    "tags": [
+        "sentinel",
+        "monitoring"
+    ],
+    "timezone": "browser",
+    "schemaVersion": 39,
+    "version": 1,
+    "refresh": "5s",
+    "time": {
+        "from": "now-15m",
+        "to": "now"
+    },
+    "panels": [
+        {
+            "id": 1,
+            "title": "Events Ingested",
+            "type": "stat",
+            "datasource": {
+                "type": "prometheus",
+                "uid": "Prometheus"
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 8,
+                "x": 0,
+                "y": 0
+            },
+            "targets": [
+                {
+                    "expr": "sentinel_events_ingested_total",
+                    "legendFormat": "Events ingested",
+                    "refId": "A"
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "title": "Anomalies Detected",
+            "type": "stat",
+            "datasource": {
+                "type": "prometheus",
+                "uid": "Prometheus"
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 8,
+                "x": 8,
+                "y": 0
+            },
+            "targets": [
+                {
+                    "expr": "sentinel_anomalies_detected_total",
+                    "legendFormat": "Anomalies",
+                    "refId": "A"
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "title": "Critical Anomalies",
+            "type": "stat",
+            "datasource": {
+                "type": "prometheus",
+                "uid": "Prometheus"
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 8,
+                "x": 16,
+                "y": 0
+            },
+            "targets": [
+                {
+                    "expr": "sentinel_anomalies_critical_total",
+                    "legendFormat": "Critical anomalies",
+                    "refId": "A"
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "title": "Event Ingestion Rate",
+            "type": "timeseries",
+            "datasource": {
+                "type": "prometheus",
+                "uid": "Prometheus"
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 5
+            },
+            "targets": [
+                {
+                    "expr": "rate(sentinel_events_ingested_total[5m])",
+                    "legendFormat": "Events per second",
+                    "refId": "A"
+                }
+            ]
+        },
+        {
+            "id": 5,
+            "title": "Detection Latency (p50/p95/p99)",
+            "type": "timeseries",
+            "datasource": {
+                "type": "prometheus",
+                "uid": "Prometheus"
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 5
+            },
+            "targets": [
+                {
+                    "expr": "histogram_quantile(0.50, sum by (le) (rate(sentinel_detection_latency_seconds_bucket[5m])))",
+                    "legendFormat": "p50",
+                    "refId": "A"
+                },
+                {
+                    "expr": "histogram_quantile(0.95, sum by (le) (rate(sentinel_detection_latency_seconds_bucket[5m])))",
+                    "legendFormat": "p95",
+                    "refId": "B"
+                },
+                {
+                    "expr": "histogram_quantile(0.99, sum by (le) (rate(sentinel_detection_latency_seconds_bucket[5m])))",
+                    "legendFormat": "p99",
+                    "refId": "C"
+                }
+            ]
+        },
+        {
+            "id": 6,
+            "title": "Anomaly Ratio",
+            "type": "timeseries",
+            "datasource": {
+                "type": "prometheus",
+                "uid": "Prometheus"
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 13
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "percent",
+                    "min": 0
+                },
+                "overrides": []
+            },
+            "targets": [
+                {
+                    "expr": "100 * rate(sentinel_anomalies_detected_total[5m]) / clamp_min(rate(sentinel_events_ingested_total[5m]), 1e-9)",
+                    "legendFormat": "Anomaly ratio (%)",
+                    "refId": "A"
+                }
+            ]
+        }
+    ]
+}
