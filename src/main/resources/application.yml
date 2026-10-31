@@ -49,3 +49,4 @@ sentinel:
   detector:
     warmup-events: 30
     z-threshold: 3.0
+    cooldown-seconds: 300
