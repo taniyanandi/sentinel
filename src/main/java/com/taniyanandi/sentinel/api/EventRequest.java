@@ -12,7 +12,7 @@ public record EventRequest(
         @NotBlank String source,
         @NotBlank String entityId,
         @NotBlank String metric,
-        @PositiveOrZero double value,
+        @NotNull @PositiveOrZero Double value,
         @NotNull Instant timestamp,
         Map<String, String> attributes) {
 }
