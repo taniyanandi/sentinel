@@ -45,4 +45,10 @@ public class KafkaConfig {
             @Value("${sentinel.kafka.alerts-topic:sentinel.alerts}") String topic) {
         return TopicBuilder.name(topic).partitions(6).replicas(1).build();
     }
+
+    @Bean
+    org.apache.kafka.clients.admin.NewTopic deadLetterTopic(
+            @Value("${sentinel.kafka.dlq-topic:sentinel.events.dlq}") String topic) {
+        return TopicBuilder.name(topic).partitions(6).replicas(1).build();
+    }
 }

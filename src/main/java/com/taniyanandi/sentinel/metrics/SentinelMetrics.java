@@ -10,15 +10,18 @@ public class SentinelMetrics {
     private final Counter ingested;
     private final Counter anomalies;
     private final Counter criticalAnomalies;
+    private final Counter deadLetteredEvents;
     private final Timer detectionLatency;
 
     public SentinelMetrics(MeterRegistry registry) {
         ingested = Counter.builder("sentinel.events.ingested").description("Events accepted by the ingestion API").register(registry);
         anomalies = Counter.builder("sentinel.anomalies.detected").description("Anomalies emitted by the detector").register(registry);
         criticalAnomalies = Counter.builder("sentinel.anomalies.critical").description("Critical anomalies emitted").register(registry);
+        deadLetteredEvents = Counter.builder("sentinel.events.dlq").description("Events routed to the dead-letter topic").register(registry);
         detectionLatency = Timer.builder("sentinel.detection.latency").description("Anomaly detection evaluation latency").register(registry);
     }
     public void eventIngested() { ingested.increment(); }
     public void anomalyDetected(boolean critical) { anomalies.increment(); if (critical) criticalAnomalies.increment(); }
+    public void eventDeadLettered() { deadLetteredEvents.increment(); }
     public Timer detectionLatency() { return detectionLatency; }
 }

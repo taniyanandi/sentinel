@@ -46,6 +46,7 @@ sentinel:
   kafka:
     events-topic: sentinel.events
     alerts-topic: sentinel.alerts
+    dlq-topic: sentinel.events.dlq
   detector:
     warmup-events: 30
     z-threshold: 3.0
