@@ -53,8 +53,9 @@ Sentinel ingests events over REST, learns a rolling baseline for every `entityId
 5. **Event is scored.** It computes the z-score, unless the key is still in its warm-up phase.
 6. **Baseline is updated.** The new value is folded into the mean and variance. This happens for every event, anomalous or not.
 7. **Anomalies become alerts.** If z is 3 or higher, an alert with a severity is published to `sentinel.alerts`. Normal events produce no alert.
-8. **Alert is stored.** The alert consumer upserts it into PostgreSQL by `alert_id`, so a redelivered alert never creates a duplicate row.
-9. **Client reads alerts.** `GET /v1/alerts` and `GET /v1/alerts/severity/{severity}` read from PostgreSQL.
+8. **Detection failures go to the DLQ.** If anomaly detection throws, the original event and error metadata are published to `sentinel.events.dlq` and counted by the `sentinel.events.dlq` metric.
+9. **Alert is stored.** The alert consumer upserts it into PostgreSQL by `alert_id`, so a redelivered alert never creates a duplicate row.
+10. **Client reads alerts.** `GET /v1/alerts` and `GET /v1/alerts/severity/{severity}` read from PostgreSQL.
 
 ---
 
@@ -228,6 +229,7 @@ More build details are in [BUILDING.md](BUILDING.md).
 | PostgreSQL outage | Stop Postgres mid stream | Alert consumption retries, nothing lost, catch up after restart |
 | Duplicate delivery | Replay the same alert | No duplicate rows in the database |
 | Broker interruption | Stop Kafka, then restart it | Producer errors while down, reconnection after restart |
+| Detection failure | Make the detector reject an event | Original event and error metadata appear on `sentinel.events.dlq` |
 
 ---
 

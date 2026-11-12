@@ -21,4 +21,12 @@ public class DetectionState implements Serializable {
     public double mean() { return mean; }
     public double variance() { return count > 1 ? m2 / (count - 1) : 0.0; }
     public double stdDev() { return Math.sqrt(variance()); }
+
+    public long getCount() { return count; }
+    public double getMean() { return mean; }
+    public double getM2() { return m2; }
+
+    public void setCount(long count) { this.count = count; }
+    public void setMean(double mean) { this.mean = mean; }
+    public void setM2(double m2) { this.m2 = m2; }
 }
